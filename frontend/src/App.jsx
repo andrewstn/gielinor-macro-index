@@ -174,10 +174,10 @@ function App() {
         </div>
 
         {/* Basket Breakdown Section */}
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-lg shadow-xl h-[450px] flex flex-col">
+        <div className="bg-slate-900 border border-slate-800 p-6 rounded-lg shadow-xl h-112.5 flex flex-col">
           <h2 className="text-xl font-semibold mb-6 shrink-0">Basket Breakdown</h2>
           
-          <div className="space-y-4 overflow-y-auto pr-2 flex-grow scrollbar-thin">
+          <div className="space-y-4 overflow-y-auto pr-2 grow scrollbar-thin">
             {basket.length > 0 ? basket.map((item, index) => (
               <div key={index} className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <span className="text-sm text-slate-300">{item.item}</span>
