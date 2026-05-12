@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 import time
 from database import get_db_connection
 from services import calculate_current_index
@@ -17,16 +17,30 @@ def get_pvm_index():
     }
 
 @router.get("/api/history")
-def get_history():
+def get_history(hours: int = Query(24, description="Hours of history to fetch")):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT timestamp, index_value FROM index_history ORDER BY timestamp DESC LIMIT 50")
+    
+    # Calculate how far back in time to look
+    seconds_to_subtract = hours * 60 * 60
+    cutoff_time = int(time.time()) - seconds_to_subtract
+    
+    # Grab all rows that happened AFTER the cutoff time
+    cursor.execute('''
+        SELECT timestamp, index_value 
+        FROM index_history 
+        WHERE timestamp >= ? 
+        ORDER BY timestamp ASC
+    ''', (cutoff_time,))
+    
     rows = cursor.fetchall()
     conn.close()
     
+    # Format the data for our React graph
     history_data = [
+        # If looking at 7 days, we might want to show Month/Day, but for now HH:MM is fine
         {"time": time.strftime('%H:%M', time.localtime(row[0])), "value": row[1]} 
-        for row in reversed(rows)
+        for row in rows
     ]
     
     return {"status": "Success", "data": history_data}
