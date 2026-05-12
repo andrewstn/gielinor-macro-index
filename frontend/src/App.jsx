@@ -140,7 +140,7 @@ function App() {
             </div>
           </div>
           
-          <div className="flex-grow min-h-[300px]">
+          <div className="grow min-h-75">
             {loading ? (
                <div className="w-full h-full animate-pulse bg-slate-800/50 rounded flex items-center justify-center">
                  <Clock className="text-slate-600 animate-spin" size={32} />
@@ -174,21 +174,21 @@ function App() {
         </div>
 
         {/* Basket Breakdown Section */}
-        <div className="bg-slate-900 border border-slate-800 p-6 rounded-lg shadow-xl h-fit">
-          <h2 className="text-xl font-semibold mb-6">Basket Breakdown</h2>
-          <div className="space-y-4">
+        <div className="bg-slate-900 border border-slate-800 p-6 rounded-lg shadow-xl h-[450px] flex flex-col">
+          <h2 className="text-xl font-semibold mb-6 shrink-0">Basket Breakdown</h2>
+          
+          <div className="space-y-4 overflow-y-auto pr-2 flex-grow scrollbar-thin">
             {basket.length > 0 ? basket.map((item, index) => (
               <div key={index} className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <span className="text-sm text-slate-300">{item.item}</span>
                 <span className="text-sm font-semibold text-emerald-400">
-                  {/* Convert raw GP to a clean decimal (e.g. 1.5M or 450.5K) */}
                   {item.price >= 1000000 
                     ? `${(item.price / 1000000).toFixed(1)}M` 
                     : `${(item.price / 1000).toFixed(1)}K`}
                 </span>
               </div>
             )) : (
-              [1,2,3,4,5].map(i => (
+              [1,2,3,4,5,6,7].map(i => (
                  <div key={i} className="animate-pulse flex justify-between border-b border-slate-800 pb-2">
                     <div className="h-4 bg-slate-800 rounded w-32"></div>
                     <div className="h-4 bg-slate-800 rounded w-12"></div>
