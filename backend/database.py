@@ -2,17 +2,19 @@ import sqlite3
 import time
 
 def init_db():
-    conn = sqlite3.connect("g500.db")
-    cursor = conn.cursor()
+    connection = sqlite3.connect("g500.db")
+    cursor = connection.cursor()
+    
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS index_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp INTEGER,
+            index_name TEXT, 
             index_value REAL
         )
     ''')
-    conn.commit()
-    conn.close()
+    connection.commit()
+    connection.close()
 
 def get_db_connection():
     return sqlite3.connect("g500.db")

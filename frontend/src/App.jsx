@@ -8,27 +8,37 @@ function App() {
   const [basket, setBasket] = useState([])
   const [loading, setLoading] = useState(true)
   
-  // NEW: State to track which timeframe the user is looking at (defaults to 24 hours)
-  const [timeframe, setTimeframe] = useState(24) 
+  const [timeframe, setTimeframe] = useState(24)
+  const [activeTab, setActiveTab] = useState("PvM Blue-Chips")
 
   const fetchData = async () => {
     try {
       const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
-      // NEW: We pass the timeframe to the Python API
-      const historyRes = await fetch(`${API_BASE}/api/history?hours=${timeframe}`)
-      const historyData = await historyRes.json()
+      // 1. Fetch History with BOTH timeframe and activeTab
+      const historyUrl = `${API_BASE}/api/history?hours=${timeframe}&index_name=${encodeURIComponent(activeTab)}`;
+      const historyRes = await fetch(historyUrl);
+      const historyData = await historyRes.json();
       
-      const currentRes = await fetch(`${API_BASE}/api/pvm-index`)
-      const currentData = await currentRes.json()
+      // 2. Fetch Current Index with activeTab
+      const currentUrl = `${API_BASE}/api/index?index_name=${encodeURIComponent(activeTab)}`;
+      const currentRes = await fetch(currentUrl);
+      const currentData = await currentRes.json();
 
       if (historyData.status === 'Success') {
         setHistory(Array.isArray(historyData.data) ? historyData.data : [])
+      } else {
+        setHistory([])
       }
+      
       if (currentData.status === 'Success') {
         setCurrentIndex(currentData.g500_index)
         setBasket(currentData.items)
+      } else {
+        setCurrentIndex(null)
+        setBasket([])
       }
+      
       setLoading(false)
     } catch (error) {
       console.error("Error fetching data:", error)
@@ -36,10 +46,9 @@ function App() {
     }
   }
 
-  // Notice we added `timeframe` to the dependency array at the bottom.
-  // This tells React: "If the user clicks a new timeframe button, instantly run this effect again!"
+  // The dependency array tells React to re-fetch when these variables change
   useEffect(() => {
-    setLoading(true) // Show skeletons when changing timeframes
+    setLoading(true)
     fetchData()
     
     const interval = setInterval(() => {
@@ -47,9 +56,8 @@ function App() {
     }, 300000)
     
     return () => clearInterval(interval)
-  }, [timeframe])
+  }, [timeframe, activeTab])
 
-  // NEW: The Skeleton Loader UI
   if (loading && !currentIndex) {
     return (
       <div className="min-h-screen bg-slate-950 p-8">
@@ -67,13 +75,13 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-8 font-mono">
       {/* Header */}
-      <header className="mb-8 border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+      <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
           <h1 className="text-3xl font-bold text-emerald-400 flex items-center gap-2">
             <Activity size={28} />
             G-500 Macro Index
           </h1>
-          <p className="text-slate-400 mt-1">OSRS PvM Blue-Chip Economy Tracker</p>
+          <p className="text-slate-400 mt-1">OSRS Economy Sector Tracker</p>
         </div>
         <div className="text-left md:text-right">
           <p className="text-slate-400 text-sm mb-1">Current Index Value</p>
@@ -82,6 +90,23 @@ function App() {
           </p>
         </div>
       </header>
+
+      {/* Economy Sector Tabs */}
+      <div className="flex gap-4 border-b border-slate-800 mb-8 pb-px">
+        {["PvM Blue-Chips", "Consumables"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`pb-3 px-2 text-sm font-semibold transition-colors border-b-2 ${
+              activeTab === tab 
+                ? 'border-emerald-400 text-emerald-400' 
+                : 'border-transparent text-slate-500 hover:text-slate-300'
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -94,7 +119,6 @@ function App() {
               Index Volatility
             </h2>
             
-            {/* NEW: Interactive Timeframe Controls */}
             <div className="flex bg-slate-950 rounded-lg p-1 border border-slate-800">
               {[
                 { label: '1H', value: 1 },
@@ -116,7 +140,7 @@ function App() {
             </div>
           </div>
           
-          <div className="grow min-h-75">
+          <div className="flex-grow min-h-[300px]">
             {loading ? (
                <div className="w-full h-full animate-pulse bg-slate-800/50 rounded flex items-center justify-center">
                  <Clock className="text-slate-600 animate-spin" size={32} />
@@ -136,7 +160,7 @@ function App() {
                     dataKey="value" 
                     stroke="#34d399" 
                     strokeWidth={3}
-                    dot={false} // Turned off dots to make the line look cleaner when viewing large timeframes!
+                    dot={false}
                     activeDot={{ r: 6, fill: '#34d399' }}
                   />
                 </LineChart>
@@ -157,11 +181,13 @@ function App() {
               <div key={index} className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <span className="text-sm text-slate-300">{item.item}</span>
                 <span className="text-sm font-semibold text-emerald-400">
-                  {(item.price / 1000000).toFixed(1)}M
+                  {/* Convert raw GP to a clean decimal (e.g. 1.5M or 450.5K) */}
+                  {item.price >= 1000000 
+                    ? `${(item.price / 1000000).toFixed(1)}M` 
+                    : `${(item.price / 1000).toFixed(1)}K`}
                 </span>
               </div>
             )) : (
-              // Skeleton for the basket items
               [1,2,3,4,5].map(i => (
                  <div key={i} className="animate-pulse flex justify-between border-b border-slate-800 pb-2">
                     <div className="h-4 bg-slate-800 rounded w-32"></div>
