@@ -1,5 +1,10 @@
 import requests
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 PVM_BLUE_CHIPS = {
     "Twisted bow": 20997,
     "Scythe of vitur (uncharged)": 22325,
@@ -16,9 +21,11 @@ INDEX_DIVISOR = 5000000
 
 def calculate_current_index():
     url = "https://prices.runescape.wiki/api/v1/osrs/latest"
-    headers = {'User-Agent': 'G500-Dashboard-Project - @YourGitHubUsername'}
-    response = requests.get(url, headers=headers)
     
+    # Grab the User-Agent from .env!
+    headers = {'User-Agent': os.getenv('WIKI_USER_AGENT')}
+    
+    response = requests.get(url, headers=headers)
     if response.status_code != 200:
         return None, None
         
