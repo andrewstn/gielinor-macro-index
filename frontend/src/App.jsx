@@ -10,14 +10,16 @@ function App() {
 
   const fetchData = async () => {
     try {
+      // Grab the base URL from our .env file
+      const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
       // Fetch the historical graph data
-      const historyRes = await fetch('http://127.0.0.1:8000/api/history')
-      const historyData = await historyRes.json()
+      const historyRes = await fetch(`${API_BASE}/api/history`);
+      const historyData = await historyRes.json();
       
       // Fetch today's current index and basket breakdown
-      const currentRes = await fetch('http://127.0.0.1:8000/api/pvm-index')
-      const currentData = await currentRes.json()
-
+      const currentRes = await fetch(`${API_BASE}/api/pvm-index`);
+      const currentData = await currentRes.json();
       // We add a safety check here to guarantee Recharts always gets an array
       if (historyData.status === 'Success') {
         setHistory(Array.isArray(historyData.data) ? historyData.data : [])
