@@ -93,7 +93,7 @@ function App() {
 
       {/* Economy Sector Tabs */}
       <div className="flex gap-4 border-b border-slate-800 mb-8 pb-px">
-        {["PvM Blue-Chips", "Consumables"].map((tab) => (
+        {["PvM Blue-Chips", "Consumables", "Third Age", "Gilded", "Implings"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
