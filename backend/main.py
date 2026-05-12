@@ -2,34 +2,37 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.background import BackgroundScheduler
 from contextlib import asynccontextmanager
+import os
+from dotenv import load_dotenv
 
 # Import our custom modules
-from database import init_db
+from database import init_db, cleanup_old_data
 from scheduler import background_fetch_and_store
 from routers import router
 
-import os
-from dotenv import load_dotenv
+load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
     
     scheduler = BackgroundScheduler()
+    # The normal 5-minute data fetch
     scheduler.add_job(background_fetch_and_store, 'interval', minutes=5)
+    
+    # Cleanup runs once a day
+    scheduler.add_job(cleanup_old_data, 'interval', days=1)
     scheduler.start()
     
-    background_fetch_and_store() # Run once immediately
+    # Run both immediately on startup
+    background_fetch_and_store() 
+    cleanup_old_data()
     
     yield
     scheduler.shutdown()
 
 app = FastAPI(lifespan=lifespan)
 
-# Load the variables from the .env file
-load_dotenv()
-
-# Get the URL from .env, but default to "*" if it can't find it
 frontend_url = os.getenv("FRONTEND_URL", "*")
 
 app.add_middleware(
@@ -40,5 +43,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Connect all API endpoints to the main app
 app.include_router(router)
