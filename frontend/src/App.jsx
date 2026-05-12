@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { Activity, TrendingUp, Clock } from 'lucide-react'
+import { Activity, TrendingUp, Clock, Info } from 'lucide-react'
+
 
 function App() {
   const [history, setHistory] = useState([])
@@ -83,12 +84,22 @@ function App() {
           </h1>
           <p className="text-slate-400 mt-1">OSRS Economy Sector Tracker</p>
         </div>
-        <div className="text-left md:text-right">
-          <p className="text-slate-400 text-sm mb-1">Current Index Value</p>
+          <div className="text-left md:text-right">
+          {/* Tooltip Group Container */}
+          <div className="flex items-center md:justify-end gap-1.5 mb-1 relative group w-max md:w-auto md:ml-auto">
+            <p className="text-slate-400 text-sm">Current Index Value</p>
+            <Info size={14} className="text-slate-500 cursor-help transition-colors group-hover:text-emerald-400" />
+            
+            {/* The Tooltip Box (Hidden by default, fades in on hover) */}
+            <div className="absolute top-full right-0 mt-2 w-64 p-3 bg-slate-800 text-slate-300 text-xs rounded shadow-2xl border border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 text-left pointer-events-none">
+              Calculated by summing the live Grand Exchange prices of all items in the basket, divided by a fixed base divisor to create a stable, readable benchmark score.
+            </div>
+          </div>
+          
           <p className="text-4xl font-bold text-emerald-400">
             {currentIndex ? currentIndex.toFixed(2) : '---'}
           </p>
-        </div>
+        </div> 
       </header>
 
       {/* Economy Sector Tabs */}
