@@ -55,7 +55,6 @@ def get_history(
     
     cutoff_time = int(time.time()) - (hours * 60 * 60)
     
-    # We now filter the database by the specific sector name
     cursor.execute('''
         SELECT timestamp, index_value 
         FROM index_history 
@@ -66,5 +65,28 @@ def get_history(
     rows = cursor.fetchall()
     conn.close()
     
-    history_data = [{"time": time.strftime('%H:%M', time.localtime(row[0])), "value": row[1]} for row in rows]
+    history_data = []
+    window = []
+    WINDOW_SIZE = 12 # 12 data points * 5 mins = 1 Hour Moving Average
+    
+    for row in rows:
+        val = row[1]
+        
+        # 1. Add the newest price to our window
+        window.append(val)
+        
+        # 2. If our window gets bigger than 12, kick out the oldest price
+        if len(window) > WINDOW_SIZE:
+            window.pop(0)
+            
+        # 3. Calculate the average of the current window
+        sma = round(sum(window) / len(window), 2)
+        
+        # 4. Save BOTH the raw value and the SMA
+        history_data.append({
+            "time": time.strftime('%H:%M', time.localtime(row[0])), 
+            "value": val,
+            "sma": sma # <-- The magic new data line
+        })
+        
     return {"status": "Success", "data": history_data}

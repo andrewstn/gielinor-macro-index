@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { Activity, TrendingUp, Clock, Info, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 
 
@@ -182,17 +182,33 @@ function App() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                   <XAxis dataKey="time" stroke="#64748b" minTickGap={30} />
                   <YAxis domain={['auto', 'auto']} stroke="#64748b" />
+                  
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#020617', borderColor: '#1e293b', color: '#34d399' }}
-                    itemStyle={{ color: '#34d399' }}
+                    contentStyle={{ backgroundColor: '#020617', borderColor: '#1e293b' }}
+                    itemStyle={{ color: '#f8fafc' }}
                   />
+                  
+                  <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '12px' }} />
+
                   <Line 
                     type="monotone" 
                     dataKey="value" 
+                    name="Raw Index"
                     stroke="#34d399" 
                     strokeWidth={3}
                     dot={false}
                     activeDot={{ r: 6, fill: '#34d399' }}
+                  />
+                  
+                  <Line 
+                    type="monotone" 
+                    dataKey="sma" 
+                    name="1-Hour Trend (SMA)"
+                    stroke="#94a3b8" 
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={false}
+                    activeDot={false}
                   />
                 </LineChart>
               </ResponsiveContainer>
