@@ -77,41 +77,49 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-8 font-mono">
-      {/* Header */}
+{/* Header */}
       <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        
+        {/* LEFT SIDE: Titles */}
         <div>
           <h1 className="text-3xl font-bold text-emerald-400 flex items-center gap-2">
             <Activity size={28} />
             G-500 Macro Index
           </h1>
-          <div className="flex items-center justify-start md:justify-end mt-1 font-semibold text-lg">
-            {change24h !== null ? (
-              <div className={`flex items-center gap-1 ${change24h >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                {change24h >= 0 ? <ArrowUpRight size={20} /> : <ArrowDownRight size={20} />}
-                <span>{Math.abs(change24h)}%</span>
-              </div>
-            ) : (
-               <span className="text-slate-500 text-sm">Gathering History...</span>
-            )}
-          </div>
           <p className="text-slate-400 mt-1">OSRS Economy Sector Tracker</p>
         </div>
-          <div className="text-left md:text-right">
-          {/* Tooltip Group Container */}
-          <div className="flex items-center md:justify-end gap-1.5 mb-1 relative group w-max md:w-auto md:ml-auto">
+
+        {/* RIGHT SIDE: Values & Tooltips */}
+        <div className="flex flex-col items-start md:items-end">
+          
+          {/* Tooltip Header Row */}
+          <div className="flex items-center gap-1.5 mb-1 relative group w-max md:w-auto">
             <p className="text-slate-400 text-sm">Current Index Value</p>
             <Info size={14} className="text-slate-500 cursor-help transition-colors group-hover:text-emerald-400" />
             
-            {/* The Tooltip Box (Hidden by default, fades in on hover) */}
+            {/* The Tooltip Box */}
             <div className="absolute top-full right-0 mt-2 w-64 p-3 bg-slate-800 text-slate-300 text-xs rounded shadow-2xl border border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 text-left pointer-events-none">
               Calculated by summing the live Grand Exchange prices of all items in the basket, divided by a fixed base divisor to create a stable, readable benchmark score.
             </div>
           </div>
           
-          <p className="text-4xl font-bold text-emerald-400">
-            {currentIndex ? currentIndex.toFixed(2) : '---'}
-          </p>
-        </div> 
+          {/* NEW: Number and % Change side-by-side! */}
+          <div className="flex items-baseline gap-3">
+            <p className="text-4xl font-bold text-emerald-400">
+              {currentIndex ? currentIndex.toFixed(2) : '---'}
+            </p>
+            
+            {change24h !== null ? (
+              <div className={`flex items-center text-xl font-semibold ${change24h >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {change24h >= 0 ? <ArrowUpRight size={24} strokeWidth={3} /> : <ArrowDownRight size={24} strokeWidth={3} />}
+                <span>{Math.abs(change24h)}%</span>
+              </div>
+            ) : (
+               <span className="text-slate-500 text-sm font-normal">Gathering History...</span>
+            )}
+          </div>
+
+        </div>
       </header>
 
       {/* Economy Sector Tabs */}
