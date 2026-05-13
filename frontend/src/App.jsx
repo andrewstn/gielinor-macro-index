@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { Activity, TrendingUp, Clock, Info } from 'lucide-react'
+import { Activity, TrendingUp, Clock, Info, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 
 
 function App() {
   const [history, setHistory] = useState([])
   const [currentIndex, setCurrentIndex] = useState(null)
+  const [change24h, setChange24h] = useState(null)
   const [basket, setBasket] = useState([])
   const [loading, setLoading] = useState(true)
   
@@ -34,6 +35,7 @@ function App() {
       
       if (currentData.status === 'Success') {
         setCurrentIndex(currentData.g500_index)
+        setChange24h(currentData.change_24h)
         setBasket(currentData.items)
       } else {
         setCurrentIndex(null)
@@ -82,6 +84,16 @@ function App() {
             <Activity size={28} />
             G-500 Macro Index
           </h1>
+          <div className="flex items-center justify-start md:justify-end mt-1 font-semibold text-lg">
+            {change24h !== null ? (
+              <div className={`flex items-center gap-1 ${change24h >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {change24h >= 0 ? <ArrowUpRight size={20} /> : <ArrowDownRight size={20} />}
+                <span>{Math.abs(change24h)}%</span>
+              </div>
+            ) : (
+               <span className="text-slate-500 text-sm">Gathering History...</span>
+            )}
+          </div>
           <p className="text-slate-400 mt-1">OSRS Economy Sector Tracker</p>
         </div>
           <div className="text-left md:text-right">
