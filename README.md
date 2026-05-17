@@ -4,7 +4,7 @@ The G-500 Macro Index is a Bloomberg-terminal-style dashboard designed to track,
 
 ## Features
 
-- Dynamic Sector Tracking: Flawlessly swap between custom market baskets (PvM Gear, Skilling Consumables, etc.) to view sector-specific performance.
+- Dynamic Sector Tracking: Flawlessly swap between custom market baskets (PvM Gear, Consumables, Third Age, etc.) to view sector-specific performance.
 
 - Automated Data Pipeline: A self-sustaining Python background scheduler scrapes live Grand Exchange data from the OSRS Wiki API every 5 minutes.
 
@@ -15,6 +15,10 @@ The G-500 Macro Index is a Bloomberg-terminal-style dashboard designed to track,
 - 24-Hour Market Indicators: Automatically calculates percentage changes against historical data to display real-time positive/negative market momentum badges.
 
 - Self-Maintaining Database: Built-in data lifecycle management automatically prunes records older than 30 days to prevent server bloat.
+
+- Demo Data Generator: Includes a custom randomization script to simulate 7 days of realistic market volatility for immediate dashboard visualization.
+
+- Containerized Architecture: Fully Dockerized environment for instant, reliable setup across any machine without local dependency conflicts.
 
 ## Tech Stack
 
@@ -40,7 +44,46 @@ The G-500 Macro Index is a Bloomberg-terminal-style dashboard designed to track,
 
 - Requests & Python-Dotenv
 
-## Local Setup Instructions
+### DevOps & Infrastructure
+
+- Docker & Docker Compose
+
+## Setup Instructions
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/YourUsername/g-500-dashboard.git
+cd g-500-dashboard
+```
+
+You can run this project using Docker (Recommended) or via a manual local installation.
+
+## Method 1: Docker Setup (Recommended)
+
+Prerequisites: Docker and Docker Compose installed on your system.
+
+### Start the Containers
+
+From the root directory of the project, build and start the application:
+
+```bash
+docker-compose up --build
+```
+
+### Generate Demo Data
+
+Because Docker uses an isolated database volume, you need to populate it to see historical charts immediately. Open a second terminal window, navigate to the project root, and run the generator script inside the backend container:
+
+```bash
+docker-compose exec backend python generate_demo_data.py
+```
+
+### View the Dashboard (Dockerized)
+
+Open your browser and navigate to [http://localhost:5173](http://localhost:5173).
+
+## Method 2: Local Setup Instructions
 
 Follow these steps to get the G-500 Macro Index running on your local machine.
 
@@ -50,35 +93,29 @@ Follow these steps to get the G-500 Macro Index running on your local machine.
 
 - Python 3.8+ installed (for the FastAPI backend)
 
-### Clone the Repository
-
-```bash
-git clone https://github.com/YourUsername/g-500-dashboard.git
-cd g-500-dashboard
-```
-
 ### Backend Setup (Python / FastAPI)
 
-Open a terminal and navigate to the backend directory.
+### Open a terminal and navigate to the backend directory
 
 ```bash
 cd backend
 ```
 
-Create and activate a virtual environment
+### Create and activate a virtual environment
 
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows use: venv\Scripts\activate
 ```
 
-Install the required dependencies
+### Install the required dependencies
 
 ```bash
 pip install fastapi uvicorn requests apscheduler python-dotenv
 ```
 
-Configure Backend Environment Variables:
+### Configure Backend Environment Variables
+
 Create a .env file inside the backend folder and add the following:
 
 ```code
@@ -108,20 +145,29 @@ Install Node modules
 npm install
 ```
 
-Configure Frontend Environment Variables:
+### Configure Frontend Environment Variables
+
 Create a .env file inside the frontend folder and add the following:
 
 ```code
 VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-Start the Frontend Server:
+### Generate Demo Data (Optional but recommended)
+
+Run this script to inject 7 days of simulated market history into your local database so your charts populate instantly.
+
+```bash
+python generate_demo_data.py
+```
+
+### Start the Frontend Server
 
 ```bash
 npm run dev
 ```
 
-### View the Dashboard
+### View the Dashboard (Locally)
 
 Open your browser and navigate to ```http://localhost:5173```.
 (Note: The 1-Hour Moving Average line and the 24H Percentage Change indicators will populate once the server has been running long enough to collect historical data).
