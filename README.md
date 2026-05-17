@@ -5,19 +5,12 @@ The G-500 Macro Index is a Bloomberg-terminal-style dashboard designed to track,
 ## Features
 
 - Dynamic Sector Tracking: Flawlessly swap between custom market baskets (PvM Gear, Consumables, Third Age, etc.) to view sector-specific performance.
-
 - Automated Data Pipeline: A self-sustaining Python background scheduler scrapes live Grand Exchange data from the OSRS Wiki API every 5 minutes.
-
 - Quantitative Analytics: Features a 1-Hour Simple Moving Average (SMA) trendline layered over raw data to filter out market noise.
-
 - Interactive Data Visualization: Sleek, responsive charts with adjustable timeframes (1H, 24H, 7D) and custom hover tooltips.
-
 - 24-Hour Market Indicators: Automatically calculates percentage changes against historical data to display real-time positive/negative market momentum badges.
-
 - Self-Maintaining Database: Built-in data lifecycle management automatically prunes records older than 30 days to prevent server bloat.
-
 - Demo Data Generator: Includes a custom randomization script to simulate 7 days of realistic market volatility for immediate dashboard visualization.
-
 - Containerized Architecture: Fully Dockerized environment for instant, reliable setup across any machine without local dependency conflicts.
 
 ## Tech Stack
@@ -25,23 +18,16 @@ The G-500 Macro Index is a Bloomberg-terminal-style dashboard designed to track,
 ### Frontend
 
 - React (via Vite)
-
 - Tailwind CSS (Styling & Layout)
-
 - Recharts (Interactive SVG Charting)
-
 - Lucide React (UI Icons)
 
 ### Backend
 
 - Python 3
-
 - FastAPI (High-performance API routing)
-
 - APScheduler (Background task automation)
-
 - SQLite (Local database storage)
-
 - Requests & Python-Dotenv
 
 ### DevOps & Infrastructure
