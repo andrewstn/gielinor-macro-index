@@ -1,0 +1,29 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mounts local code so changes hot-reload inside the container
+      - ./backend:/app
+      # Creates a persistent volume for SQLite database
+      - backend_db:/app/data
+    environment:
+      - FRONTEND_URL=http://localhost:5173
+      - WIKI_USER_AGENT=G500-Dashboard-Dockerized
+    restart: always
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  backend_db:
